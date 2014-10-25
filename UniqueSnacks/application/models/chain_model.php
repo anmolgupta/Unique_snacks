@@ -7,9 +7,22 @@
             parent::__construct();
         }   
         
+        public function updateTable($tableName, $row)
+        {
+                $this->db->query('UPDATE '.$tableName.' 
+                                  set level_id = '.$row->level_id.' ,
+                                  chain = \''.$row->chain.'\' 
+                                  where id = '.$row->id);
+        }
+        
+        public function getRelatedRecords($tableName, $id)
+        {
+            $result = $this->db->query('Select * from '.$tableName.' where chain like \''.$id.'-%\' OR chain like \'%-'.$id.'-%\'');
+            return $result;
+        }
+        
         public function insert_multiple_rows($tableName, $rows)
         {
-            var_dump($rows);
             foreach ($rows->result() as $row) {
                                 
                 if($row->introducer_id == '0')
@@ -69,28 +82,35 @@
         
         public function countDirectPersonsAddedPerMonth($table, $id, $month, $year)
         {
-            $result = $this->db->query('select count(*) as count from 
-                              (SELECT table1.chain, table2.id
+            $result = $this->db->query('SELECT table1.chain, table2.id, table2.joining_fee as amount
                               FROM '.$table.' as table1
                               JOIN customer_info as table2
                               ON table1.id=table2.id 
-                              where month(table2.doj) in('.$month.') and year(table2.doj) in('.$year.')) table3
-                              where table3.chain like \''.$id.'-%\' ');
-             $rows = $result->result();
-             return $rows[0]->count;  
+                              where month(table2.doj) in('.$month.') and year(table2.doj) in('.$year.')
+                              and table1.chain like \''.$id.'-%\' ');
+             return $result;  
         }
         
         public function countIndirectPersonsAddedPerMonth($table, $id, $month, $year)
         {
-            $result = $this->db->query('select count(*) as count from 
-                              (SELECT table1.chain, table2.id
+            $result = $this->db->query('SELECT table1.chain, table2.id, table2.joining_fee as amount
                               FROM '.$table.' as table1
                               JOIN customer_info as table2
                               ON table1.id=table2.id 
-                              where month(table2.doj) in('.$month.') and year(table2.doj) in('.$year.')) table3
-                              where table3.chain like \'%-'.$id.'-%\'');
-            $rows  = $result->result();
-            return $rows[0]->count;
+                              where month(table2.doj) in('.$month.') and year(table2.doj) in('.$year.')
+                              and table1.chain like \'%-'.$id.'-%\'');
+            return $result;
+        }
+        
+        public function countAllPersonsAddedPerMonth($table, $id, $month, $year)
+        {
+            $result = $this->db->query('SELECT table1.chain, table2.id
+                              FROM '.$table.' as table1
+                              JOIN customer_info as table2
+                              ON table1.id=table2.id 
+                              where month(table2.doj) in('.$month.') and year(table2.doj) in('.$year.')
+                              and table1.chain like \'%-'.$id.'-%\' OR table1.chain like \''.$id.'-%\' ');
+            return $result;
         }
         
         public function insert($table, $row)

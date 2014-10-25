@@ -79,5 +79,12 @@
                             where month(table2.doj) in('.$month.') and year(table2.doj) in('.$year.')');
             return $result;
         }
+        
+        public function getIncentiveFromLevelTable($level_id)
+        {
+            $result = $this->db->query('Select percentage_share from level where level_id = '.$level_id);
+            $array = $result->result();
+            return $array[0]->percentage_share;
+        }
     }
 ?>
