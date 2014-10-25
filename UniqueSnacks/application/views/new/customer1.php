@@ -2,6 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
+    <script>
+    
+    </script>
 <head>
     <title>Untitled Page</title>
     <style type="text/css">
@@ -50,21 +53,21 @@
     </style>
 </head>
 <body>
-<form method="post" accept-charset="utf-8" action="/UniqueSnacks/index.php/magazine/callback">
+<form method="post" accept-charset="utf-8" action="/UniqueSnacks/index.php/newEntry/callback">
     <table style="width:100%;">
         <tr>
             <td class="style1">
                 Date Of Joining</td>
             <td class="style6">
-                <input id="Text1" type="text" name = "doj"/></td>
+                <input id="Text1" type="text" name = "doj" /></td>
             <td>
                 &nbsp;</td>
         </tr>
         <tr>
             <td class="style1">
-                Member Code</td>
+                Name</td>
             <td class="style6">
-                <input id="Text2" type="text" name = "member_code"/></td>
+                <input id="Text2" type="text" name = "name"/></td>
             <td>
                 &nbsp;</td>
         </tr>
@@ -72,7 +75,7 @@
             <td class="style3">
                 Father&#39;s/Husband Name</td>
             <td class="style7">
-                <input id="Text3" type="text" name = "husband/fathername"/></td>
+                <input id="Text3" type="text" name = "husband_fathername" /></td>
             <td class="style5">
             </td>
         </tr>
@@ -90,7 +93,7 @@
             <td class="style3">
                 DateOf Birth</td>
             <td class="style7">
-                <input id="Text5" type="text" name = "dob"/></td>
+                <input id="Text5" type="text" name = "dob" /></td>
             <td class="style5">
             </td>
         </tr>
@@ -118,7 +121,7 @@
             <td class="style3">
                 Nationality</td>
             <td class="style7">
-                <input id="Text9" type="text" name="nationality"/></td>
+                <input id="Text9" type="text" name="nationality" /></td>
             <td class="style5">
             </td>
         </tr>
@@ -126,7 +129,7 @@
             <td class="style3">
                 PAN NO.</td>
             <td class="style7">
-                <input id="Text10" type="text" name="pan_no"/></td>
+                <input id="Text10" type="text" name="pan_no" /></td>
             <td class="style5">
             </td>
         </tr>
@@ -134,7 +137,7 @@
             <td class="style3">
                 Address</td>
             <td class="style7">
-                <input id="Text11" type="text" name="address"/></td>
+                <input id="Text11" type="text" name="address" /></td>
             <td class="style5">
             </td>
         </tr>
@@ -142,7 +145,7 @@
             <td class="style3">
                 City</td>
             <td class="style7">
-                <input id="Text12" type="text" name="city"/></td>
+                <input id="Text12" type="text" name="city" /></td>
             <td class="style5">
             </td>
         </tr>
@@ -174,7 +177,7 @@
             <td class="style3">
                 Name Of&nbsp; Nominee</td>
             <td class="style7">
-                <input id="Text4" type="text" name = "nominee_name"/></td>
+                <input id="Text4" type="text" name = "nominee_name" /></td>
             <td class="style5">
             </td>
         </tr>
@@ -207,7 +210,7 @@
             <td class="style3">
                 Introducer Code</td>
             <td class="style7">
-                <input id="Text18" type="text" name = "introduced_code"/></td>
+                <input id="Text18" type="text" name = "introducer_id"/></td>
             <td class="style5">
             </td>
         </tr>

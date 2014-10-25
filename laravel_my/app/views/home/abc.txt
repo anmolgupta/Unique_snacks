@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+
+<html>
+
+<style>
+
+.pic-container1 {
+
+    width: 50px;
+
+    height: 200px;
+
+    overflow-y: scroll;
+
+    overflow-x:hidden;
+
+}
+
+
+
+
+.pic-container{
+
+    width:1350px;
+
+    margin: 0 auto;
+
+    white-space:nowrap; 
+
+}
+
+
+
+
+.pic-row {
+
+    /* As wide as it needs to be */
+
+    width:1350px;
+
+    height:400px;
+
+    overflow:auto;
+
+}
+
+
+
+
+.pic-row a{
+
+    clear:left;
+
+    display:block;  
+
+}
+
+
+
+
+</style>
+
+<body>
+
+
+
+
+<div >
+
+<div class="pic-container">
+
+<div class="pic-row" >
+
+<a href="writeA.html"><img src="images/A.Png" /></a><br>
+
+<a href="writeB.html"><img src="images/B.Png" /></a><br>
+
+<a href="writeC.html"><img src="images/C.Png" /></a><br>
+
+<a href="writeD.html"><img src="images/D.Png" /></a><br>
+
+<a href="writeE.html"><img src="images/E.Png" /></a><br>
+
+<a href="writeF.html"><img src="images/F.Png" /></a><br>
+
+</div>
+
+</div>
+
+
+
+
+<form action="demo_keygen.asp" method="get">
+
+
+
+
+<br>
+
+<div>
+
+<input type="checkbox" name="vehicle" value="Bike">I have a bike<br>
+
+<input type="checkbox" name="vehicle" value="Car">I have a car <br>
+
+<input type="submit">
+
+</form>
+
+
+
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+
+<script type="text/javascript">
+
+
+
+
+/***********************************************
+
+* Limit number of checked checkboxes script- by JavaScript Kit (www.javascriptkit.com)
+
+* This notice must stay intact for usage
+
+* Visit JavaScript Kit at http://www.javascriptkit.com/ for this script and 100s more
+
+***********************************************/
+
+
+
+
+function checkboxlimit(checkgroup, limit){
+
+	var checkgroup=checkgroup
+
+	var limit=limit
+
+	for (var i=0; i<checkgroup.length; i++){
+
+		checkgroup[i].onclick=function(){
+
+		var checkedcount=0
+
+		for (var i=0; i<checkgroup.length; i++)
+
+			checkedcount+=(checkgroup[i].checked)? 1 : 0
+
+		if (checkedcount>limit){
+
+			alert("You can only select a maximum of "+limit+" checkboxes")
+
+			this.checked=false
+
+			}
+
+		}
+
+	}
+
+}
+
+
+
+
+</script>
+
+<html>
+
+<body>
+
+
+
+
+<p id="demo"></p>
+
+
+
+
+
+
+
+<p>Select your favorite two countries below:</p>
+
+
+
+
+<form id="world" name="world">
+
+<input type="checkbox" name="countries" /> USA<br />
+
+<input type="checkbox" name="countries" /> Canada<br />
+
+<input type="checkbox" name="countries" /> Japan<br />
+
+<input type="checkbox" name="countries" /> China<br />
+
+<input type="checkbox" name="countries" /> France<br />
+
+<script type="text/javascript">
+
+checkboxlimit(document.forms.world.countries, 2)
+
+
+
+
+</script>
+
+</form>
+
+</body>
+
+</html>
+
+
+
+
+<input type="checkbox" name="checkbox[]" id="checkbox-1" class="custom" value="english"/>
+
+
+
