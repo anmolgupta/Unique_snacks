@@ -1,7 +1,11 @@
-               <a href= "#month_sal"> Monthly Summary  </a><br><br>
-               
-               <a href= "#individual_id"> Customer Month Summary  </a><br><br>
-                
+               <div id="nav-bar">
+               <div id="nav-bar-style">
+               <a href= "#month_sal"> MONTHLY SUMMARY  </a><br>
+               </div>
+               <br>
+               <div id="nav-bar-style"> 
+               <a href= "#individual_id"> INDIVIDUAL SUMMARY  </a><br><br>
+                </div>
                 <div id="month_sal" class="modalDialog">
                      <div> <a href="#close" title="Close" class="close">X</a>
                         <h4> 
@@ -54,3 +58,5 @@
                         </h4>
                     </div>
                 </div>
+                </div>
+            

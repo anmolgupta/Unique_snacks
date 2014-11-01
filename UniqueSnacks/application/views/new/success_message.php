@@ -1,12 +1,10 @@
-<html>
+<div>
     <h2>
         <?php
             echo $message; 
         ?>
     </h2>
-    <body>
+    </div>
         <a href="/UniqueSnacks/index.php/newEntry/login">New Record</a>
         <br>
-        <a href="/UniqueSnacks/index.php/mainpage">Main Page</a>
-    </body>
-</html>
+<a href="/UniqueSnacks/index.php/mainpage">Main Menu </a>

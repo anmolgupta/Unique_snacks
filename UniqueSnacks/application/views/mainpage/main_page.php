@@ -1,3 +1,3 @@
 <h2>
-    WE HIRE EVERYONE!!!!
+    <center>WE HIRE EVERYONE!!!! </center>
 </h2>

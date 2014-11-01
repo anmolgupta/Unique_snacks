@@ -2,6 +2,7 @@
 
 class MonthSummary extends CI_Controller {
     
+    
     public function __construct()
     {
         parent::__construct();    
@@ -19,20 +20,23 @@ class MonthSummary extends CI_Controller {
         $this->load->model('Table_Model');
         $tableModel = new Table_Model();
         
-        if(!$tableModel->isTablePresent(''.$currentMonth.'_salary'))
+        if(!$tableModel->isTablePresent('salary_'.$currentMonth))
         {
+             $this->load->view('mainpage/header');
              $this->load->view('new/error_message', array(
-                        'message'=> 'Cannot calculated as data NOT generated<br>Contact Admin' 
+                        'message'=> 'Cannot Perform Operation as Data for '.$currentMonth->getCurrentMonth().', '.$currentMonth->year.' 
+                        is not present.<br>Contact Admin' 
                                                         ));
                 return;
+             $this->load->view('mainpage/footer');
         }
         
         $this->load->model('Salary_Model');
         $salaryModel = new Salary_Model();
         
-        $result = $salaryModel->getTableRecordsWithAccountDetails(''.$currentMonth.'_salary');
+        $result = $salaryModel->getTableRecordsWithAccountDetails('salary_'.$currentMonth);
         $this->load->view('salary_display/total_month_summary', array(
-                                                                'month'=>$month, 
+                                                                'month'=>$currentMonth->getCurrentMonth(), 
                                                                  'year'=>$year,
                                                                  'rows'=>$result->result_array()
                                                                  ));
@@ -57,156 +61,155 @@ class MonthSummary extends CI_Controller {
         $this->load->model('Table_Model');
         $tableModel = new Table_Model();
         
-        if(!$tableModel->isTablePresent(''.$currentMonth.'_salary'))
+        if(!$tableModel->isTablePresent('chaining_'.$currentMonth))
         {
-             $this->load->view('new/error_message', array(
-                                                    'message'=> 'Cannot calculated as data NOT generated<br>Contact Admin' 
-                                                        ));
-                return;
-        }
-        
-        $result = $chainModel->getLevel(''.$currentMonth.'_chaining', $id);
-        if(!$result)
-        {
+            $this->load->view('mainpage/header');
             $this->load->view('new/error_message', array(
-                                                    'message'=> 'ID not present.' 
+                                          'message'=> 'Cannot Perform Operation as Data for '.$currentMonth->getCurrentMonth().', '.$currentMonth->year.' 
+                        is not present.<br>Contact Admin'  
                                                         ));
-                return;    
+            $this->load->view('mainpage/footer');
+            return;
         }
         
+        $currentMonthChaining = 'chaining_'.$currentMonth;
         
-        if($result->level_id != 2)
+        //getting records which are on level2.
+        $result = $chainModel->getRecordsHavingLevel2($currentMonthChaining);
+        
+        //getting the records which are upgraded from level1 to level 2 in current month.
+        $upgraded_records = $this->getUpgradedRecords($currentMonth, $result);
+        
+        $this->load->model('New_record_entry');
+        
+        $view_elements = array();
+        $calculated_ids = array();
+        
+        $min_level = $tableModel->getPercentageShare(1);
+        //traversing the records which are updated in the current month        
+        foreach ($upgraded_records as $upgraded_record) 
         {
-            $this->calculateSalaryIfLevelIdNotManipulated($chainModel, $currentMonth, $id, $month, $year);
+            $records = $chainModel->getFirst9Records($month, $year, $upgraded_record);
+            foreach($records->result() as $record)
+            {
+                $amount = $record->amount;
+                
+                $amount_deducted = 0;
+                $introducer_id = $record->introducer_id;
+                
+                $chain_element = 0;
+                while($introducer_id != 0)
+                {
+                    if($chain_element == 0)
+                    {
+                        $parent = $chainModel->getIncentive($currentMonthChaining, $introducer_id);
+                        $parent->share =$min_level;
+                        $incentive = $parent->share;
+                        $incentive -= $amount_deducted;
+                    }
+                    else
+                    {
+                        $parent = $chainModel->getIncentive($currentMonthChaining, $introducer_id);
+                        $incentive = $parent->share;
+                        $incentive -= $amount_deducted;
+                    }
+                    
+                    
+                    $calculatedAmount = ($incentive * $amount)/100;
+                    if($parent->id == $id)
+                    {
+                        $view_elements[] = array(
+                                            'id' => $record->id,
+                                            'amount' => $calculatedAmount
+                                                );
+                    }
+                    
+                    $amount_deducted = $parent->share;
+                    $introducer_id = $parent->introducer_id;
+                    $chain_element++;
+                }
+                $calculated_ids[] = $record->id;
+            }
         }
-        else
+        
+        //calculating salary.
+        $monthEntries = $chainModel->getMonthlyChainedData($currentMonthChaining ,$month, $year);
+        foreach($monthEntries->result() as $monthEntry)
         {
-            //finding the level_id of the previous month & if the row has been added in this month.
-            $previousMonth = clone $currentMonth;
-            $previousMonth->getPreviousMonth();
-            
-            //if table present
-            if($tableModel->isTablePresent(''.$previousMonth.'_salary'))
+            if(!in_array($monthEntry->id, $calculated_ids))
             {
-                $previousMonthTableRecord = $chainModel->getLevel(''.$previousMonth.'_salary', $id);
+                $amount = $monthEntry->amount;
                 
-                if($previousMonthTableRecord == false)
+                $amount_deducted = 0;
+                $introducer_id = $monthEntry->introducer_id;
+                while($introducer_id != 0)
                 {
-                    $this->calculateSalaryIfLevelIdManipulated($chainModel, $currentMonth, $id, $month, $year);
+                    $parent = $chainModel->getIncentive($currentMonthChaining, $introducer_id);
+                    $incentive = $parent->share;
+                    $incentive -= $amount_deducted;
+                    
+                    $calculatedAmount = ($incentive * $amount)/100;
+                    if($parent->id == $id)
+                    {
+                        $view_elements[] = array(
+                                            'id' => $monthEntry->id,
+                                            'amount'=> $calculatedAmount    
+                                                );
+                    }
+                    
+                    $amount_deducted = $parent->share;
+                    $introducer_id = $parent->introducer_id;
                 }
-                else if($previousMonthTableRecord->level_id == 2)
-                {
-                    $this->calculateSalaryIfLevelIdNotManipulated($chainModel, $currentMonth, $id, $month, $year);
-                }
-                
-            }
-            else
-            {
-               $this->calculateSalaryIfLevelIdManipulated($chainModel, $currentMonth, $id, $month, $year);
-                
             }
         }
+
+        $record = $this->New_record_entry->getRecord($id);
+        $this->load->view('salary_display/per_person_month_summary', array(
+                                                                      'tableView' => $view_elements,
+                                                                      'id' => $id,
+                                                                      'month' => $currentMonth->getCurrentMonth(),
+                                                                      'year' => $year,
+                                                                      'name' => $record->name
+                                                                          ));
+
+           
      }
-    private function calculateSalaryIfLevelIdManipulated($chainModel, $currentMonth,  $id, $month, $year)
-    {
-        $result = $chainModel->countDirectPersonsAddedPerMonth(''.$currentMonth.'_chaining', $id, $month, $year);
-        $level_id =1;
-        
-        $incentive = $this->Table_Model->getIncentiveFromLevelTable($level_id);
-        $tableView = array();
-        $i = 0;
-        foreach($result->result() as $row)
-        {
-              $i++;
-              
-              $amount = ($row->amount * $incentive)/100;
-              $tableView[] = array(
-                                    'id' => $row->id ,
-                                    'amount' => $amount);
-              
-              if($i == 9)
-              {
-                  $level_id++;
-                  $incentive = $this->Table_Model->getIncentiveFromLevelTable($level_id);
-              }  
-        }
-        
-        $result = $chainModel->countIndirectPersonsAddedPerMonth(''.$currentMonth.'_chaining', $id, $month, $year);
-        foreach($result->result() as $row)
-        {
-            $amount = $row->amount;
-            
-            $chain_array = explode('-',$row->chain);
-            
-            $amount_deducted = 0;
-                        
-            foreach($chain_array as $chain)
-            {
-                    if($chain == $id)
-                    {
-                        $incentive =  $chainModel->getIncentive(''.$currentMonth.'_chaining', $id);
-                        $incentive -=  $amount_deducted;
-                        $calculatedAmount = ($amount * $incentive)/100; 
-                        $tableView[] = array(
-                            'id' => $row->id,
-                            'amount' => $calculatedAmount,
-                              ); 
-                        break;    
-                    }
-                    $amount_deducted = $chainModel->getIncentive(''.$currentMonth.'_chaining', $chain);
-            }                        
-        }
-         $ret_value = array(
-                     'id'=>$id,
-                     'month'=>$month,
-                     'year'=>$year,
-                     'tableView'=>$tableView      
-                           );
 
-        $this->load->view('salary_display/per_person_month_summary',$ret_value);
-    }   
-    
-     
-    //this work needs to be done if the person is not promoted from level1     
-    private function calculateSalaryIfLevelIdNotManipulated($chainModel, $currentMonth,  $id, $month, $year)
+    private function getUpgradedRecords($currentMonth, $result)
     {
-        $result = $chainModel->getRowsPerPersonPerMonth(''.$currentMonth.'_chaining', $id, $month, $year);
+        $previousMonth = clone $currentMonth;
+        $previousMonth->getPreviousMonth();
         
-        $tableView = array();
+        $previousMonthChaining =  'chaining_'.$previousMonth;
+        $tableModel = new Table_Model();
         
-        foreach($result->result() as $row)
+        $ret_array = array();
+        
+        if($tableModel->isTablePresent($previousMonthChaining))
         {
-            $amount = $row->amount;
-            
-            $chain_array = explode('-',$row->chain);
-            
-            $amount_deducted = 0;
-                        
-            foreach($chain_array as $chain)
+            foreach($result->result() as $row)
             {
-                    //var_dump($chain);
-                    if($chain == $id)
+                $chainModel = new Chain_Model();
+                $previousMonthRow = $chainModel->getLevel($previousMonthChaining, $row->id);
+                if($previousMonthRow == false)
+                {
+                    $ret_array[] = $row->id; 
+                }
+                else{
+                    if($previousMonthRow->level_id == 1)
                     {
-                        $incentive =  $chainModel->getIncentive(''.$currentMonth.'_chaining', $id);
-                        $incentive -=  $amount_deducted;
-                        $calculatedAmount = ($amount * $incentive)/100; 
-                        $tableView[] = array(
-                            'id' => $row->id,
-                            'amount' => $calculatedAmount,
-                              ); 
-                        break;    
+                        $ret_array[] = $row->id;
                     }
-                    $amount_deducted = $chainModel->getIncentive(''.$currentMonth.'_chaining', $chain);
-            }                        
+                }
+            }
         }
-        
-        $ret_value = array(
-                     'id'=>$id,
-                     'month'=>$month,
-                     'year'=>$year,
-                     'tableView'=>$tableView      
-                           );
-
-        $this->load->view('salary_display/per_person_month_summary',$ret_value);
+        else 
+        {
+            foreach($result->result() as $row)
+            {
+                $ret_array[] = $row->id;    
+            }    
+        }
+        return $ret_array;
     }
 }

@@ -56,7 +56,7 @@
             
             $sql = 'Create Table '. $tableName.' (
                     id INT(20),
-                    chain VARCHAR(200),
+                    introducer_id INT(20),
                     level_id INT(10) ,
                     PRIMARY KEY( id )
                     );';    
@@ -69,22 +69,32 @@
         {
             $this->db->query('Drop table '.$tableName);
         }
-        
-        public function calculateSalary($chainingTable,$month, $year)
-        {
-            $result = $this->db->query('SELECT table1.chain as chain, table2.joining_fee as amount
-                            FROM '.$chainingTable.' as table1
-                            JOIN customer_info as table2
-                            ON table1.id=table2.id 
-                            where month(table2.doj) in('.$month.') and year(table2.doj) in('.$year.')');
-            return $result;
-        }
-        
+       
         public function getIncentiveFromLevelTable($level_id)
         {
             $result = $this->db->query('Select percentage_share from level where level_id = '.$level_id);
             $array = $result->result();
             return $array[0]->percentage_share;
         }
+        
+        public function cloneTable($oldTable, $newTable)
+        {
+            $this->db->query('CREATE TABLE '.$newTable.' SELECT * FROM '.$oldTable);
+        }
+        
+        public function getName($id)
+        {
+            $result = $this->db->query('Select name from customer_info where id = '.$id);
+            $name = $result->result();
+            
+            return $name[0]->name;
+        }
+
+        public function getPercentageShare($id)
+        {
+            $query = $this->db->query('Select percentage_share as share from level where level_id ='. $id);
+            $result = $query->result();
+            return $result[0]->share;
+        } 
     }
 ?>
