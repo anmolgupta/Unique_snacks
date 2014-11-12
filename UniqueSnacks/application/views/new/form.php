@@ -169,7 +169,6 @@ function validate() //main validation function
      document.myForm.address.focus() ;
      return false;
    }
-   ///^[\w\s.-]+\d+,\s*[\w\s.-]+$/
 
    //city validation
    if( document.myForm.city.value == "" || !(document.myForm.city.value.match(/^[a-zA-Z\s]+$/)) )
@@ -186,16 +185,6 @@ function validate() //main validation function
    {
      alert( "Please provide valid pincode" );
      document.myForm.pincode.focus() ;
-     return false;
-   }
-
-   //phone no
-   if(  document.myForm.phone_no.value == "" ||
-           isNaN( document.myForm.phone_no.value )
-     )
-   {
-     alert( "Please provide valid phone no." );
-     document.myForm.phone_no.focus() ;
      return false;
    }
 
@@ -368,7 +357,7 @@ function validate() //main validation function
 
                     <tr>
                         <td>
-                            Phone No.* (with STD code)
+                            Phone No. (with STD code)
                         </td>
                         <td>
                             <input type="text" name="phone_no" />

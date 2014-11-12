@@ -31,6 +31,11 @@
             $this->db->update($this::DB_TABLE, $this);
             
         }
+        public function getRecordRelatedToIntroducer($introducer_id)
+        {
+            $result = $this->db->query('Select * from '.$this::DB_TABLE.' where introducer_id = '.$introducer_id);
+            return $result->num_rows;
+        }
         
         public function getRecord($introducer_id)
         {

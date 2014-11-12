@@ -189,19 +189,10 @@ function validate() //main validation function
      return false;
    }
 
-   //phone no
-   if(  document.myForm.phone_no.value == "" ||
-           isNaN( document.myForm.phone_no.value ))
-   {
-     alert( "Please provide valid phone no." );
-     document.myForm.phone_no.focus() ;
-     return false;
-   }
-
    //mobile no validation
    if(  document.myForm.mobile_no.value == "" ||
            isNaN( document.myForm.mobile_no.value ) ||
-           document.myForm.mobile_no.value.length != 10 )
+           document.myForm.mobile_no.value.length != 11 )
    {
      alert( "Please provide valid mobile no." );
      document.myForm.mobile_no.focus() ;
@@ -374,7 +365,7 @@ function validate() //main validation function
 
                     <tr>
                         <td>
-                            Phone No.* (with STD Code)
+                            Phone No. (with STD Code)
                         </td>
                         <td>
                             <input type="text" name="phone_no" value="<?php echo $record->phone_no; ?>" />

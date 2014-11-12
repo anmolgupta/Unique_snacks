@@ -2,6 +2,7 @@
 
 class NewEntry extends CI_Controller {
     
+    const COMPANY_ID = '1';
     public function __construct()
     {
         parent::__construct();    
@@ -18,12 +19,13 @@ class NewEntry extends CI_Controller {
     {
         $this->load->model('New_record_entry');
         
+        $introducer_name = trim($_POST['introducer_name']);
         //checking if the introducer key is not 0 i.e. company.
-        if($_POST['introducer_id'] !== '0')
+        if($_POST['introducer_id'] !== $this::COMPANY_ID)
         {
             //checking if introducer with the specified name & id already present or not
             $record = $this->New_record_entry->getRecord($_POST['introducer_id']);
-            if($record == false || strcasecmp($_POST['introducer_name'], $record->name) !== 0)
+            if($record == false || strcasecmp($introducer_name, $record->name) !== 0)
             {
                 $this->load->view('mainpage/header');
                 $this->load->view('new/error_message', array(
@@ -34,9 +36,9 @@ class NewEntry extends CI_Controller {
             }
         }
         else
-        if($_POST['introducer_id'] == '0')
+        if($_POST['introducer_id'] == $this::COMPANY_ID)
         {
-            if(strcasecmp($_POST['introducer_name'], 'company') !== 0)
+            if(strcasecmp($introducer_name, 'Unique Snacks') !== 0)
             {
                 $this->load->view('mainpage/header');
                 $this->load->view('new/error_message', array(
@@ -70,7 +72,7 @@ class NewEntry extends CI_Controller {
 
         $obj->doj = date("Y-m-d", strtotime($_POST['doj']));
         
-        $obj->name = $_POST['Name'];
+        $obj->name = trim($_POST['Name']);
         $obj->husband_fathername=$_POST['husband_fathername'];
         $obj->sex=$_POST['sex'];
         $obj->dob = date("Y-m-d", strtotime($_POST['dob']));
@@ -195,6 +197,19 @@ class NewEntry extends CI_Controller {
         $this->load->model('Table_Model');
         $tableModel = new Table_Model();
         
+        $this->load->model('New_record_entry');
+        
+          
+          if($this->New_record_entry->getRecordRelatedToIntroducer($id) > 0)
+          {
+                $this->load->view('mainpage/header');
+                $this->load->view('new/error_message', array(
+                        'message'=> 'This record has some related records in database'
+                                                        ));
+                $this->load->view('mainpage/footer');             
+                return;
+          }
+        
         if($tableModel->isTablePresent('salary_'.$currentMonth))
         {
              $this->load->view('mainpage/header');
@@ -205,7 +220,7 @@ class NewEntry extends CI_Controller {
              $this->load->view('mainpage/footer');             
              return;
         }
-        $this->load->model('New_record_entry');
+        
         $this->New_record_entry->delete_record($id);
         
         $this->load->view('mainpage/header');
@@ -229,7 +244,7 @@ class NewEntry extends CI_Controller {
             $obj->id = $id;
             $obj->doj = date("Y-m-d", strtotime($_POST['doj']));
             
-            $obj->name = $_POST['Name'];
+            $obj->name = trim($_POST['Name']);
             $obj->husband_fathername=$_POST['husband_fathername'];
             $obj->sex=$_POST['sex'];
             $obj->dob = date("Y-m-d", strtotime($_POST['dob']));

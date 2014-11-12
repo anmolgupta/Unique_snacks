@@ -2,11 +2,12 @@
 
 class MonthSummary extends CI_Controller {
     
-    
+    const COMPANY_ID = '1';   
     public function __construct()
     {
         parent::__construct();    
     }
+    
     
     public function total_month_summary()
     {
@@ -98,7 +99,7 @@ class MonthSummary extends CI_Controller {
                 $introducer_id = $record->introducer_id;
                 
                 $chain_element = 0;
-                while($introducer_id != 0)
+                while($introducer_id != $this::COMPANY_ID)
                 {
                     if($chain_element == 0)
                     {
@@ -142,7 +143,7 @@ class MonthSummary extends CI_Controller {
                 
                 $amount_deducted = 0;
                 $introducer_id = $monthEntry->introducer_id;
-                while($introducer_id != 0)
+                while($introducer_id != $this::COMPANY_ID)
                 {
                     $parent = $chainModel->getIncentive($currentMonthChaining, $introducer_id);
                     $incentive = $parent->share;

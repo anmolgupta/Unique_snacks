@@ -1,7 +1,7 @@
 <?php
     class Table_Model extends CI_Model
     {
-        const DATABASE = 'laravel';
+        const DATABASE = 'uniquesnacks';
         
         function __construct()
         {
@@ -16,7 +16,7 @@
         
         public function isTableEmpty($table)
         {
-            $count =  $this->db->count_all($table);;
+            $count =  $this->db->count_all($table);
             if($count == 0)
             {
                 return true;
@@ -28,6 +28,7 @@
         {
             $result = $this->getTables();
             foreach ($result->result_array() as $row) {
+                
                 $indexedRow = array_values($row);
                 
                 if($indexedRow[0] == $table)
@@ -50,6 +51,24 @@
            
             return $return ;
         }
+        //Test
+        public function createTableForContact()
+        {
+            $sql = 'Create Table contact (
+                    id INT(20)  AUTO_INCREMENT,
+                    message varchar(1000),
+                    email varchar(100),
+                    name varchar(100),
+                    PRIMARY KEY (id)
+                    );';
+            
+            $return = $this->db->query($sql);
+           
+            return $return ;
+        }
+        
+        
+        
         
         public function createTableForChaining($tableName)
         {

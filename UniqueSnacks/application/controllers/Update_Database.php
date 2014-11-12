@@ -2,7 +2,7 @@
 
 class Update_Database extends CI_Controller {
     
-    
+    const COMPANY_ID = '1';
     const minDirectCount = 9;
     const maxLevel = 5;
     
@@ -102,7 +102,7 @@ class Update_Database extends CI_Controller {
             while(true)
             {
                 $introducer_id = $mainRecord->introducer_id;
-                if($introducer_id == 0)
+                if($introducer_id == $this::COMPANY_ID)
                 {
                     break;
                 }
@@ -138,7 +138,7 @@ class Update_Database extends CI_Controller {
                     $introducer_id = $chained_result->introducer_id;
                     while(true)
                     {
-                        if($introducer_id == 0)
+                        if($introducer_id == $this::COMPANY_ID)
                         {
                             break;
                         }
@@ -174,7 +174,7 @@ class Update_Database extends CI_Controller {
                         {
                             if(pow($this::minDirectCount, $i) <= $value)
                             {
-                                $result->level_id = $i + 1;
+                                $row->level_id = $i + 1;
                                 break;
                             }
                         }
@@ -200,7 +200,7 @@ class Update_Database extends CI_Controller {
                 
                 $amount_deducted = 0;
                 $introducer_id = $record->introducer_id;
-                while($introducer_id != 0)
+                while($introducer_id != $this::COMPANY_ID)
                 {
                     $parent = $chainModel->getIncentive($currentMonthChaining, $introducer_id);
                     $incentive = $parent->share;

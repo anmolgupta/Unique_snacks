@@ -2,6 +2,7 @@
     class Chain_Model extends CI_Model
     {   
         public $id, $level_id, $introducer_id;
+        const min_number = 9;
         
         function __construct()
         {
@@ -75,7 +76,7 @@
                                 and year(doj) = '.$year.'
                                 and introducer_id > 0 
                                 group by introducer_id order by introducer_id) table3 
-                                where count>=9');
+                                where count >= '.$this::min_number);
             return $result;
         }   
         
@@ -87,7 +88,7 @@
                                         AND year(doj) = '.$year.'
                                         AND introducer_id = '.$introducer_id.' 
                                         order by id 
-                                        limit 9');
+                                        limit '.$this::min_number);
             return $result;
         }    
     }
